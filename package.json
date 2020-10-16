@@ -1,0 +1,16 @@
+{
+  "name": "q-reactive",
+  "version": "0.1.71",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "publish": "npm publish "
+  },
+  "dependencies": {
+    "@types/node": "^14.11.8",
+    "@types/react": "^16.9.49",
+    "q-proxyable": "1.0.23",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^3.0.2"
+  }
+}
