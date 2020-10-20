@@ -171,7 +171,7 @@ export function OnWillUpdate() {
 export function OnUpdated() {
   // UNSAFE_componentWillUpdate
   return (target: any, key: string, descripter: PropertyDescriptor) => {
-    const func = target.UNSAFE_componentWillUpdate;
+    const func = target.componentDidUpdate;
     target["componentDidUpdate"] = function () {
       func && func.apply(this, arguments);
       descripter.value.apply(this, arguments);
@@ -179,6 +179,17 @@ export function OnUpdated() {
   };
 }
 
+//   UNSAFE_componentWillReceiveProps
+export function OnReceiveProps() {
+  // UNSAFE_componentWillUpdate
+  return (target: any, key: string, descripter: PropertyDescriptor) => {
+    const func = target.UNSAFE_componentWillReceiveProps;
+    target["UNSAFE_componentWillReceiveProps"] = function () {
+      func && func.apply(this, arguments);
+      descripter.value.apply(this, arguments);
+    };
+  };
+}
 /**
  * 被标记的方法会存放上一个条件的结果，自行去判断是否更新
  */
