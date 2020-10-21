@@ -1,6 +1,6 @@
 {
   "name": "q-reactive",
-  "version": "0.1.72",
+  "version": "0.1.79",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",

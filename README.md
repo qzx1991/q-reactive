@@ -5,9 +5,9 @@
 ## 基本使用
 
 ```tsx
-import { QComponent, State } from "q-reactive";
+import { State } from "q-reactive";
 import React, { Component } from "react";
-@QComponent()
+
 export default class extends Component {
   @State()
   count = 0;
@@ -54,9 +54,9 @@ this.setState({
 我们会在`render`函数执行的时候去记录组件所依赖的对象、属性。
 
 ```tsx
-import { QComponent, State } from "q-reactive";
+import { State } from "q-reactive";
 import React, { Component } from "react";
-@QComponent()
+
 export default class extends Component {
   @State()
   count = 0;
@@ -83,9 +83,9 @@ export default class extends Component {
 
 ```tsx
 import { Computed } from "q-proxyable";
-import { QComponent, State } from "q-reactive";
+import { State } from "q-reactive";
 import React, { Component } from "react";
-@QComponent()
+
 export default class extends Component {
   @State()
   count = 0;
@@ -137,9 +137,9 @@ export default class extends Component {
 这里，我们也实现了这样的功能，不过，却没有太多的限制：
 
 ```tsx
-import { QComponent, State } from "q-reactive";
+import { State } from "q-reactive";
 import React, { Component } from "react";
-@QComponent()
+
 export default class extends Component {
   @State()
   count = 0;
@@ -218,10 +218,10 @@ const b = Ioc(B);
 #### 例子
 
 ```tsx
-import { QComponent, State } from "q-reactive";
+import { State } from "q-reactive";
 import React, { Component } from "react";
 import { Iocable } from "qzx-ioc";
-@QComponent()
+
 export default class extends Component {
   @Iocable()
   a: A; // 你也可以不用注解  a = Ioc(A)
@@ -302,9 +302,9 @@ export default class Main {
 ### OnUnmount / OnRendered / OnMounted / OnWillUpdate / OnUpdated
 
 ```tsx
-import { QComponent, State, OnUnmount } from "q-reactive";
+import { State, OnUnmount } from "q-reactive";
 import React, { Component } from "react";
-@QComponent()
+
 export default class extends Component {
   @State()
   count = 1;
@@ -330,9 +330,9 @@ export default class extends Component {
 ### ShuoldUpdate
 
 ```tsx
-import { QComponent, State, ShuoldUpdate } from "q-reactive";
+import { State, ShuoldUpdate } from "q-reactive";
 import React, { Component } from "react";
-@QComponent()
+
 export default class extends Component {
   @ShuoldUpdate()
   should1(nextProps, preStatus) {
