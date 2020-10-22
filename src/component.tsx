@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { addProxyHandler } from "q-proxyable";
+import { addProxyHandler, resetProtoType } from "q-proxyable";
 import React, { Component } from "react";
 
 let TEMP_RUNNING_COMPONENT_INSTANCE: any = null;
@@ -77,18 +77,6 @@ function clearComponentRely(component: Component) {
   });
 }
 
-// 重写prototype防止污染源prototype
-function resetProtoType(t: Function, m: Function = t) {
-  const prototype = t.prototype;
-  const Temp: any = function () {};
-  Temp.prototype = prototype;
-  try {
-    m.prototype = new Temp();
-  } catch (e) {
-    console.log(e, t, t.prototype);
-  }
-  return t.prototype;
-}
 const q_react_component_symbol = Symbol("q_react_component");
 // 标记某个组件已经被重写过
 function tagComponentHasRewrited(component: typeof Component) {

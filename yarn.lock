@@ -97,10 +97,10 @@ path-is-absolute@^1.0.0:
   resolved "https://registry.yarnpkg.com/path-is-absolute/-/path-is-absolute-1.0.1.tgz#174b9268735534ffbc7ace6bf53a5a9e1b5c5f5f"
   integrity sha1-F0uSaHNVNP+8es5r9TpanhtcX18=
 
-q-proxyable@1.0.23:
-  version "1.0.23"
-  resolved "https://registry.yarnpkg.com/q-proxyable/-/q-proxyable-1.0.23.tgz#1811250a52524c8e9f6a550cbacd73a7ffc9f8db"
-  integrity sha512-EdQ+9rPhlsUWJ+6kC0KejkSFwDruhGwTtrLp0JohXlMxm+dNxYYnAirtDeQ+adl5yCni3t6O8EF3nIwqedGavQ==
+q-proxyable@1.0.24:
+  version "1.0.24"
+  resolved "https://registry.yarnpkg.com/q-proxyable/-/q-proxyable-1.0.24.tgz#ad8647ad008ef7172494e287cadfeb72dc601d7a"
+  integrity sha512-rePipv2lZbEjC5FZeKqd9LTHBzHTS93fnlsnC8kqS+roFCJajHWgsSiyOacFilWQvXrcGG0NHjaXJ8eV6bFrrg==
   dependencies:
     events "^3.1.0"
     tslib "^1.10.0"
