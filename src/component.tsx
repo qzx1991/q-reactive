@@ -42,7 +42,11 @@ addProxyHandler({
       inLife = true;
       setTimeout(() => {
         inLife = false;
-        updateList.forEach((com) => com.forceUpdate());
+        updateList.forEach((com) => {
+          try {
+            com.forceUpdate();
+          } catch (e) {}
+        });
         updateList.clear();
       });
     }
@@ -77,85 +81,115 @@ function clearComponentRely(component: Component) {
   });
 }
 
-const q_react_component_symbol = Symbol("q_react_component");
-// 标记某个组件已经被重写过
-function tagComponentHasRewrited(component: typeof Component) {
-  const proto = resetProtoType(component);
-  proto[q_react_component_symbol] = true;
-}
+// const q_react_component_symbol = Symbol("q_react_component");
+// // 标记某个组件已经被重写过
+// function tagComponentHasRewrited(component: typeof Component) {
+//   const proto = resetProtoType(component);
+//   proto[q_react_component_symbol] = true;
+// }
 
-function isComponentReWrited(component: Function) {
-  return component.prototype[q_react_component_symbol];
-}
+// function isComponentReWrited(component: Function) {
+//   return component.prototype[q_react_component_symbol];
+// }
 
-function rewriteComponent(type: typeof Component) {
-  // 是类组件  重写类组件相关方法
-  reWriteWillUnmount(type);
-  reWriteRender(type);
-  // 标记已经重写过
-  tagComponentHasRewrited(type);
-}
+// function rewriteComponent(type: typeof Component) {
+//   // 是类组件  重写类组件相关方法
+//   reWriteWillUnmount(type);
+//   reWriteRender(type);
+//   // 标记已经重写过
+//   tagComponentHasRewrited(type);
+// }
 
-function newWillUnMount(componentWillUnmount: Function) {
-  return function () {
-    clearComponentRely(this as any);
-    RUNNING_INSTANCE_PROXY_MAP.delete(this as any);
-    return componentWillUnmount && componentWillUnmount.apply(this);
+// function newWillUnMount(componentWillUnmount: Function) {
+//   return function () {
+//     clearComponentRely(this as any);
+//     RUNNING_INSTANCE_PROXY_MAP.delete(this as any);
+//     return componentWillUnmount && componentWillUnmount.apply(this);
+//   };
+// }
+
+// function reWriteWillUnmount(component: typeof Component) {
+//   component.prototype.componentWillUnmount = newWillUnMount(
+//     component.prototype.componentWillUnmount!
+//   );
+// }
+
+// function newRender(render: Function) {
+//   return function () {
+//     clearComponentRely(this as any);
+//     // 记录render期间的实例 在createElement中使用
+//     TEMP_RUNNING_COMPONENT_INSTANCE = this;
+//     const res = render.apply(this);
+//     TEMP_RUNNING_COMPONENT_INSTANCE = null;
+//     return res;
+//   };
+// }
+
+// function reWriteRender(component: typeof Component) {
+//   component.prototype.render = newRender(component.prototype.render);
+// }
+
+// function reWriteFunction(func: Function) {
+//   // 按道理这个时候是存在的
+//   const temp = TEMP_RUNNING_COMPONENT_INSTANCE;
+//   function newCom() {
+//     // 到了这里不一定存在了 需要重新记录一下依赖
+//     TEMP_RUNNING_COMPONENT_INSTANCE = temp;
+//     const res = func(...arguments);
+//     TEMP_RUNNING_COMPONENT_INSTANCE = null;
+//     return res;
+//   }
+//   resetProtoType(func, newCom);
+//   return newCom;
+// }
+
+// // 修改渲染逻辑
+// const createElement = React.createElement;
+// function newCreateElement(type: any, ...rest: any[]) {
+//   if (typeof type === "function") {
+//     const IS_REACT_COMPONENT = type.prototype.isReactComponent;
+//     if (!IS_REACT_COMPONENT) {
+//       // 是函数组件的话，重写函数
+//       type = reWriteFunction(type);
+//     } else if (!isComponentReWrited(type)) {
+//       // 是类组件的话，标记类
+//       rewriteComponent(type);
+//     }
+//   }
+//   return createElement.apply(this, [type, ...rest]);
+// }
+
+// (React as any).createElement = newCreateElement;
+
+export function QComponent<T>() {
+  return (target: any) => {
+    return class extends target {
+      constructor(props: any, state: any) {
+        super(props, state);
+        // 初始化输入的方法
+      }
+
+      componentWillUnmount() {
+        // 组件在被卸载的时候要主要去除掉记录的依赖，这里是遍历组件所有依赖的对象
+        clearComponentRely(this as any);
+        RUNNING_INSTANCE_PROXY_MAP.delete(this as any);
+        return (
+          target.prototype.componentWillUnmount &&
+          target.prototype.componentWillUnmount.apply(this)
+        );
+      }
+
+      render() {
+        clearComponentRely(this as any);
+        // 记录render期间的实例 在createElement中使用
+        TEMP_RUNNING_COMPONENT_INSTANCE = this;
+        const res = target.prototype.render.apply(this);
+        TEMP_RUNNING_COMPONENT_INSTANCE = null;
+        return res;
+      }
+    } as any;
   };
 }
-
-function reWriteWillUnmount(component: typeof Component) {
-  component.prototype.componentWillUnmount = newWillUnMount(
-    component.prototype.componentWillUnmount!
-  );
-}
-
-function newRender(render: Function) {
-  return function () {
-    clearComponentRely(this as any);
-    // 记录render期间的实例 在createElement中使用
-    TEMP_RUNNING_COMPONENT_INSTANCE = this;
-    const res = render.apply(this);
-    TEMP_RUNNING_COMPONENT_INSTANCE = null;
-    return res;
-  };
-}
-
-function reWriteRender(component: typeof Component) {
-  component.prototype.render = newRender(component.prototype.render);
-}
-
-function reWriteFunction(func: Function) {
-  // 按道理这个时候是存在的
-  const temp = TEMP_RUNNING_COMPONENT_INSTANCE;
-  function newCom() {
-    // 到了这里不一定存在了 需要重新记录一下依赖
-    TEMP_RUNNING_COMPONENT_INSTANCE = temp;
-    const res = func(...arguments);
-    TEMP_RUNNING_COMPONENT_INSTANCE = null;
-    return res;
-  }
-  resetProtoType(func, newCom);
-  return newCom;
-}
-
-// 修改渲染逻辑
-const createElement = React.createElement;
-function newCreateElement(type: any, ...rest: any[]) {
-  if (typeof type === "function") {
-    const IS_REACT_COMPONENT = type.prototype.isReactComponent;
-    if (!IS_REACT_COMPONENT) {
-      // 是函数组件的话，重写函数
-      type = reWriteFunction(type);
-    } else if (!isComponentReWrited(type)) {
-      // 是类组件的话，标记类
-      rewriteComponent(type);
-    }
-  }
-  return createElement.apply(this, [type, ...rest]);
-}
-
-(React as any).createElement = newCreateElement;
 
 export function OnRendered() {
   return (target: any, key: string, descripter: PropertyDescriptor) => {
